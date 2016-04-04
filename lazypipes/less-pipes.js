@@ -1,8 +1,8 @@
 /**
- * This module exports a number of functions that can generate lazypipes
- * that perform various LESS-related tasks.
+ * Module that exports a number of functions that can generate lazypipes
+ * for performing various LESS-related tasks.
  *
- * @module gulp-kitchen-sink/lazypipes/less-pipes
+ * @file
  */
 "use strict";
 
@@ -61,6 +61,10 @@ function createHintSeverityCallbackFn(severity, callback){
 }
 
 
+/**
+ * @module gulp-kitchen-sink/lazypipes/less-pipes
+ *
+ */
 module.exports = {
 
   createHintPipe: function(lessHintOptions, errorCallback, warningCallback){

@@ -1,7 +1,10 @@
 /**
- * This module exports a group of LESS tasks.
+ * Module that exports a function that will add a number of LESS-related
+ * tasks to Gulp.
  *
- * @module gulp-kitchen-sink/tasks/less-tasks
+ * @file
+ *
+ * @see tasksModuleFn
  */
 "use strict";
 
@@ -12,42 +15,43 @@ const actionNameHint = 'hint';
 
 // Imports
 const pipes = require('../lazypipes/less-pipes');
-const GulpTaskGroup = require('../types/task-group');
 
-
-/*
- * Returns a task group containing a number of LESS-related actions.
- *
- * For compatibility with the 'gulp-load' plug-in, this module actually exports
- * a function that takes an instance of Gulp as its 1st argument and then adds
- * all tasks in this group to Gulp.
- *
- * To prevent the default auto-loading behaviour (e.g. to selectively create specific
- * tasks), add a 2nd argument with the boolean value true.
- *
- * @param gulp
- * @param lazyload
- * @param config
- * @returns {GulpTaskGroup}
- */
 
 
 /**
+ * Function that adds a number of LESS-related tasks to Gulp.
  *
- * @type {Function}
+ *
+ * @param {external:gulp} gulp    The gulp instance that the tasks will be added to.
+ * @param {boolean} [lazyload]    If omitted or `false`, all tasks within the task group will immediately be
+ *                                added to Gulp (this is the default behaviour).
+ *                                If `true`, tasks will **not** be added to Gulp.
+ * @param {module:gulp-kitchen-sink/types/build-config} [config]
+ *                                The build config that will be passed to the task group when it is created.
+ *                                If none is provided, the global config object will be used.
+ *
+ * @returns {module:gulp-kitchen-sink/types/task-group}
+ *                                A task group containing LESS-related actions that were added to Gulp as tasks
+ *                                (unless the `lazyload` flag was set).
+ *
+ * @module gulp-kitchen-sink/tasks/less-tasks
+ *
+ * @see tasksModuleFn
  */
-module.exports = GulpTaskGroup.createTasksModule(groupName, function(tasks, gulp){
+module.exports = require('../types/task-group').createTasksModule(groupName, function(tasks, gulp){
+
+  const config = tasks.config;
 
   /*
    Compiles all LESS source files and writes the resulting
    CSS to the dist folder.
    */
   tasks.addAction(actionNameBuild, function(){
-    const buildPipe = pipes.createBuildPipe( /* less options */ );
+    const buildPipe = pipes.createBuildPipe( config.less.lessConfig );
 
-    return gulp.src( /* src globs */ )
+    return gulp.src( config.srcGlobs(config.less.srcFiles) )
       .pipe(buildPipe())
-      .pipe(gulp.dest( /* dest globs */ ));
+      .pipe(gulp.dest( config.bldPath(config.less.bldDir) ));
   });
 
   /*
@@ -55,9 +59,9 @@ module.exports = GulpTaskGroup.createTasksModule(groupName, function(tasks, gulp
    reports any warnings or errors.
    */
   tasks.addAction(actionNameHint, function(){
-    const hintPipe = pipes.createHintPipe( /* less hint options */ );
+    const hintPipe = pipes.createHintPipe( config.less.lessHintConfig );
 
-    return gulp.src( /* src globs */ )
+    return gulp.src( config.srcGlobs(config.less.srcFiles) )
       .pipe(hintPipe());
   });
 

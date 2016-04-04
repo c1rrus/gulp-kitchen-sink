@@ -2,85 +2,13 @@
  * Module that exports a class for defining groups of reusable Gulp
  * tasks.
  *
+ * All of the `tasks/*-tasks.js` modules should be making use of this class.
+ *
  * @see module:gulp-kitchen-sink/types/task-group
  *
  * @file
  */
 "use strict";
-
-// DOCUMENTATION STUFF
-/**
- * Gulp.
- * @external gulp
- * @see {@link https://github.com/gulpjs/gulp/blob/master/docs/API.md|Gulp API docs}
- */
-
-/**
- * Performs the Gulp task's main operations.
- *
- * Refer to {@link https://github.com/gulpjs/gulp/blob/master/docs/API.md#gulptaskname--deps-fn|Gulp's API documentation}
- * for the expected behaviours.
- *
- * @callback gulpTaskFn
- *
- * @param {function} [cb]  Callback function to indicate when the task has completed.
- * @returns {void|Stream|Promise} Returns nothing if the function accepted a callback or runs synchronously.
- *                                Otherwise it must return a Node Stream or a Promise.
- *
- * @see {@link https://github.com/gulpjs/gulp/blob/master/docs/API.md#gulptaskname--deps-fn|Gulp's API documentation}
- */
-
-/**
- * Returns a task group and adds all of that group's actions to Gulp's tasks.
- *
- * All of the `gulp-kitchen-sink/tasks/*` modules are expected to export a function matching this
- * signature. This makes them compatible with [`gulp-load`](https://www.npmjs.com/package/gulp-load),
- * in case users wish to use that over `gulp-kitchen-sink`'s own mechanisms. This is because, if only
- * a Gulp instance is provided as the first argument, this function will automatically add tasks to
- * Gulp (which is what `gulp-load` expects).
- *
- * For cases where the auto-loading of tasks is not desired (e.g. if specific actions from the group
- * need to be added individually), the 2nd `lazyload` parameter should be set to `true`.
- *
- * @typedef {function} tasksModuleFn
- *
- * @param {external:gulp} gulp    The gulp instance that the tasks will be added to.
- * @param {boolean} [lazyload]    If omitted or `false`, all tasks within the task group will immediately be
- *                                added to Gulp (this is the default behaviour).
- *                                If `true`, tasks will **not** be added to Gulp.
- * @param {module:gulp-kitchen-sink/types/build-config} [config]
- *                                The build config that will be passed to the task group when it is created.
- *                                If none is provided, the global config object should be used.
- *
- * @see module:gulp-kitchen-sink/types/task-group#createTasksModule
- */
-
-/**
- * Adds actions to the task group.
- *
- *
- *
- *
- * @callback addActionsFn
- *
- * @param {module:gulp-kitchen-sink/types/task-group} tasks
- *                The task group that actions should be added to.
- *
- * @param {external:gulp} gulp
- *                The gulp instance that the task group will ultimately
- *                add its actions to.
- *
- * @see module:gulp-kitchen-sink/types/task-group.createTasksModule
- */
-
-/**
- * Either a string or an {@link module:gulp-kitchen-sink/types/task-group.ActionDependency|ActionDependency object}.
- *
- * @typedef {string|module:gulp-kitchen-sink/types/task-group.ActionDependency} module:gulp-kitchen-sink/types/task-group~stringOrActionDep
- */
-
-// END DOCUMENTATION STUFF
-
 
 
 
@@ -90,6 +18,19 @@
  * Dependencies on other actions in the same group can just be specified by
  * their action names. However, for dependencies on an actions in other groups,
  * instances of this class must be used.
+ *
+ * Usually, you won't need to construct your own action dependency objects since
+ * you can use a task group's {@link module:gulp-kitchen-sink/types/task-group#getActionDep|getActionDep()}
+ * method.
+ *
+ * However, for completeness, an example of constructing a stand-alone instance is shown below.
+ *
+ * @example <caption>Creating a stand-alone action dependency object</caption>
+ *
+ * const ActionDependency = require('gulp-kitchen-sink/types/task-group').ActionDependency;
+ *
+ * var myDep = new ActionDependency('group-name','action-name');
+ *
  *
  * @param {string} groupName      The name of the other group that contains the action
  *                                we are dependent on.
@@ -178,6 +119,32 @@ ActionDependency.prototype.createTaskName = function(gulpTaskGroup){
  * Initially, the task group will not contain any actions. These
  * need to be added via the {@link module:gulp-kitchen-sink/types/task-group#addAction|addAction()} method.
  *
+ * *Note*: When creating task modules, rather than manually creating instances
+ * of task groups, it is better to use the
+ * {@link module:gulp-kitchen-sink/types/task-group.createTasksModule|createTasksModule() factory function},
+ * which internally creates a task group instance and passes it to a
+ * {@link: module:gulp-kitchen-sink/types/task-group~addActionsFn|callback function},
+ * within which you can then add tasks or otherwise modify the task group.
+ *
+ *
+ * @example <caption>Creating and using a new task group instance</caption>
+ *
+ * // Construct new task group
+ * var tasks = new (require('gulp-kitchen-sink/types/task-group'))('my-group', config);
+ *
+ * // Add actions
+ * tasks.addAction('my-action', function(){ console.log('woot!'); });
+ *
+ * // Add action to Gulp as task
+ * var gulp = require('gulp');
+ * tasks.loadTask('my-action', gulp);
+ *
+ * // Verify that task was added.
+ * // Note that the task name is [group name]:[action name]!
+ * gulp.hasTask('my-group:my-action'); // Returns true
+ *
+ *
+ *
  * @param {string} groupName    The name of this group.
  *                              This name will be used for generating task names.
  *
@@ -262,6 +229,13 @@ GulpTaskGroup.prototype.createTaskName = function(actionName){
   return this.config.createTaskName(this.groupName, actionName);
 };
 
+// Documenting a type used below
+/**
+ * Either a string or an {@link module:gulp-kitchen-sink/types/task-group.ActionDependency|ActionDependency object}.
+ *
+ * @typedef {string|module:gulp-kitchen-sink/types/task-group.ActionDependency} module:gulp-kitchen-sink/types/task-group~stringOrActionDep
+ */
+
 /**
  * Converts an array of action names and/or action dependency
  * objects into an array of the corresponding Gulp task names.
@@ -312,10 +286,10 @@ GulpTaskGroup.prototype.resolveDepNames = function(deps){
  * @param {module:gulp-kitchen-sink/types/task-group~stringOrActionDep[]} [deps]
  *                      Other actions that this action depends on. These will later
  *                      be resolved to the corresponding Gulp task names.
- * @param {gulpTaskFn} fn
+ * @param {external:gulp~gulpTaskFn} fn
  *                      The function that performs the Gulp task's main
  *                      operations. This is exactly the same function
- *                      that you'd pass to gulp.task(), if you were
+ *                      that you'd pass to `gulp.task()`, if you were
  *                      using Gulp directly.
  */
 GulpTaskGroup.prototype.addAction = function(){
@@ -351,7 +325,8 @@ GulpTaskGroup.prototype.addAction = function(){
  * @param {string}  actionName    The name of this action.
  * @param {module:gulp-kitchen-sink/types/task-group~stringOrActionDep[]} actionDeps
  *                                Other actions that this action depends on.
- * @param {gulpTaskFn} taskFn     The function that performs the Gulp task's main
+ * @param {external:gulp~gulpTaskFn} taskFn
+ *                                The function that performs the Gulp task's main
  *                                operations.
  * @returns {module:gulp-kitchen-sink/types/task-group~taskLoaderFn}
  *                                            The completed task loading function for
@@ -372,6 +347,8 @@ GulpTaskGroup.prototype._createTaskLoaderFn = function(actionName, actionDeps, t
    *
    * @param {external:gulp} gulp    The Gulp instance the task should be added to when
    *                                it is loaded.
+   *
+   * @return {string}   The name of the task that was added to Gulp.
    *
    * @private
    */
@@ -394,6 +371,7 @@ GulpTaskGroup.prototype._createTaskLoaderFn = function(actionName, actionDeps, t
         taskFn
       );
     }
+    return taskName;
   }.bind(this);
 };
 
@@ -409,9 +387,11 @@ GulpTaskGroup.prototype._createTaskLoaderFn = function(actionName, actionDeps, t
  * @param {external:gulp} gulp
  *                      The Gulp instance that the task will be
  *                      added to.
+ *
+ * @return {string}   The name of the task that was added to Gulp.
  */
 GulpTaskGroup.prototype.loadTask = function(actionName, gulp){
-  this._taskLoaders[actionName](gulp);
+  return this._taskLoaders[actionName](gulp);
 };
 
 /**
@@ -424,15 +404,36 @@ GulpTaskGroup.prototype.loadTask = function(actionName, gulp){
  * @param {external:gulp} gulp
  *                      The Gulp instance that the tasks will be
  *                      added to.
+ *
+ * @return {string[]}   The names of the tasks that were added to Gulp.
  */
 GulpTaskGroup.prototype.loadAllTasks = function(gulp){
   var actionName;
+  var taskNames = [];
   for(actionName in this._taskLoaders){
-    this.loadTask(actionName, gulp);
+    taskNames.push(this.loadTask(actionName, gulp));
   }
+  return taskNames;
 };
 
 // ##### STATIC methods
+
+// Documenting callback used as param below...
+/**
+ * Callback function that adds actions to a task group.
+ *
+ * @callback addActionsFn
+ * @inner
+ *
+ * @param {module:gulp-kitchen-sink/types/task-group} tasks
+ *                The task group that actions should be added to.
+ *
+ * @param {external:gulp} gulp
+ *                The gulp instance that the task group will ultimately
+ *                add its actions to.
+ *
+ * @see module:gulp-kitchen-sink/types/task-group.createTasksModule
+ */
 
 /**
  * Factory function that creates a function suitable for us as
@@ -443,9 +444,32 @@ GulpTaskGroup.prototype.loadAllTasks = function(gulp){
  * added to Gulp's tasks before the group is returned. However
  * this can be disabled.
  *
+ * @example
+ *
+ * // Within a tasks/*.js file...
+ *
+ * // Create an export a task module function
+ * module.exports = require('gulp-kitchen-sink/types/task-group')
+ *   .createTasksModule('my-group', function(tasks, gulp){
+ *
+ *     // Add your actions in here....
+ *
+ *     // e.g.
+ *     const bldCfg = tasks.config;
+ *
+ *     tasks.addAction('action-1', function(){
+ *       return gulp.src( 'foo.html' )
+ *         .pipe( bar )
+ *         .pipe( gulp.dest( baz ) );
+ *     });
+ *
+ *   });
+ *
+ *
  *
  * @param {string} groupName              The name for the new task group.
- * @param {addActionsFn} addActionsFn     A callback function that is called after the
+ * @param {module:gulp-kitchen-sink/types/task-group~addActionsFn} addActionsFn
+ *                                        A callback function that is called after the
  *                                        new task group has been created. Can be used
  *                                        to add actions to the group.
  * @returns {tasksModuleFn}    The completed factory function.
@@ -469,7 +493,7 @@ GulpTaskGroup.createTasksModule = function(groupName, addActionsFn){
     // create all the Gulp tasks.
     // This is for compatibility with the 'gulp-load'
     // plug-in.
-    if(!lazyload){
+    if(!lazyLoad){
       tasks.loadAllTasks(gulp);
     }
 
