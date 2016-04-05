@@ -63,25 +63,25 @@ describe("An ActionDependency", function() {
 
 
   it("creates task names correctly", function(){
-    expect(this.actionDep.createTaskName(this.config)).toEqual(GROUP_NAME + SEP + ACTION_NAME);
+    expect(this.actionDep.taskName(this.config)).toEqual(GROUP_NAME + SEP + ACTION_NAME);
   });
 
   it("creates task names correctly (with prefix)", function(){
     const prefixName = 'test-prefix';
     this.config.tasks.defaultPrefixName = prefixName;
-    expect(this.actionDep.createTaskName(this.config)).toEqual(prefixName + SEP + GROUP_NAME + SEP + ACTION_NAME);
+    expect(this.actionDep.taskName(this.config)).toEqual(prefixName + SEP + GROUP_NAME + SEP + ACTION_NAME);
   });
 
   it("creates task names correctly (with action before group)", function(){
     this.config.tasks.groupBeforeAction = false;
-    expect(this.actionDep.createTaskName(this.config)).toEqual(ACTION_NAME + SEP + GROUP_NAME);
+    expect(this.actionDep.taskName(this.config)).toEqual(ACTION_NAME + SEP + GROUP_NAME);
   });
 
   it("creates task names correctly (with prefix and action before group)", function(){
     const prefixName = 'test-prefix';
     this.config.tasks.defaultPrefixName = prefixName;
     this.config.tasks.groupBeforeAction = false;
-    expect(this.actionDep.createTaskName(this.config)).toEqual(prefixName + SEP + ACTION_NAME + SEP + GROUP_NAME);
+    expect(this.actionDep.taskName(this.config)).toEqual(prefixName + SEP + ACTION_NAME + SEP + GROUP_NAME);
   });
 
 });

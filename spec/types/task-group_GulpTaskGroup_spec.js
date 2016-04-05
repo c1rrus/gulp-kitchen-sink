@@ -56,7 +56,7 @@ describe("A GulpTaskGroup", function(){
 
 
   it("initially has no actions within it", function(){
-    const actionNames = this.tasks.listActionNames();
+    const actionNames = this.tasks.getActions();
     // First check that the returned type is correct
     expect(actionNames).toEqual(jasmine.any(Array));
     // Now check that the returned array is empty
@@ -65,30 +65,30 @@ describe("A GulpTaskGroup", function(){
 
 
   it("creates task names correctly", function(){
-    expect(this.tasks.createTaskName(ACTION_NAME)).toEqual(GROUP_NAME + SEP + ACTION_NAME);
+    expect(this.tasks.taskName(ACTION_NAME)).toEqual(GROUP_NAME + SEP + ACTION_NAME);
   });
 
   it("creates task names correctly (with prefix)", function(){
     const prefixName = 'test-prefix';
     this.config.tasks.defaultPrefixName = prefixName;
-    expect(this.tasks.createTaskName(ACTION_NAME)).toEqual(prefixName + SEP + GROUP_NAME + SEP + ACTION_NAME);
+    expect(this.tasks.taskName(ACTION_NAME)).toEqual(prefixName + SEP + GROUP_NAME + SEP + ACTION_NAME);
   });
 
   it("creates task names correctly (with action before group)", function(){
     this.config.tasks.groupBeforeAction = false;
-    expect(this.tasks.createTaskName(ACTION_NAME)).toEqual(ACTION_NAME + SEP + GROUP_NAME);
+    expect(this.tasks.taskName(ACTION_NAME)).toEqual(ACTION_NAME + SEP + GROUP_NAME);
   });
 
   it("creates task names correctly (with prefix and action before group)", function(){
     const prefixName = 'test-prefix';
     this.config.tasks.defaultPrefixName = prefixName;
     this.config.tasks.groupBeforeAction = false;
-    expect(this.tasks.createTaskName(ACTION_NAME)).toEqual(prefixName + SEP + ACTION_NAME + SEP + GROUP_NAME);
+    expect(this.tasks.taskName(ACTION_NAME)).toEqual(prefixName + SEP + ACTION_NAME + SEP + GROUP_NAME);
   });
 
 
   it("creates action dependencies correctly", function(){
-    const actionDep = this.tasks.getActionDep(ACTION_NAME);
+    const actionDep = this.tasks.actionDep(ACTION_NAME);
     // Check that returned object is of correct type
     expect(actionDep instanceof GulpTaskGroup.ActionDependency).toBe(true);
     // Check that action dep properties were set correctly
@@ -103,7 +103,7 @@ describe("A GulpTaskGroup", function(){
     const externalDep = new GulpTaskGroup.ActionDependency(externalGroupName, externalActionName);
     const inputDeps = [externalDep, ACTION_NAME];
 
-    const resolvedDeps = this.tasks.resolveDepNames(inputDeps);
+    const resolvedDeps = this.tasks.resolveDeps(inputDeps);
 
     // Check that result is an array
     expect(resolvedDeps).toEqual(jasmine.any(Array));
@@ -117,14 +117,14 @@ describe("A GulpTaskGroup", function(){
 
 
   it("can have a simple action added to it", function(){
-    const initialActionCount = this.tasks.listActionNames().length;
+    const initialActionCount = this.tasks.getActions().length;
 
     // Add an action (just use a noop function, since we have
     // no intention of using it)
     this.tasks.addAction(ACTION_NAME, function(){});
 
     // Now fetch the action names
-    const tasksAfterAdding = this.tasks.listActionNames();
+    const tasksAfterAdding = this.tasks.getActions();
     // Should have one more than before
     expect(tasksAfterAdding.length).toEqual(initialActionCount + 1);
     // List of action names should include the one we just added
@@ -139,14 +139,14 @@ describe("A GulpTaskGroup", function(){
     const externalDep = new GulpTaskGroup.ActionDependency(externalGroupName, externalActionName);
     const inputDeps = [externalDep, otherActionName];
 
-    const initialActionCount = this.tasks.listActionNames().length;
+    const initialActionCount = this.tasks.getActions().length;
 
     // Add an action (just use a noop function, since we have
     // no intention of using it)
     this.tasks.addAction(ACTION_NAME, inputDeps, function(){});
 
     // Now fetch the action names
-    const tasksAfterAdding = this.tasks.listActionNames();
+    const tasksAfterAdding = this.tasks.getActions();
     // Should have one more than before
     expect(tasksAfterAdding.length).toEqual(initialActionCount + 1);
     // List of action names should include the one we just added
@@ -164,7 +164,7 @@ describe("A GulpTaskGroup", function(){
 
     // Add the action to Gulp as a task
     this.tasks.loadTask(ACTION_NAME, gulp);
-    const taskName = this.tasks.createTaskName(ACTION_NAME);
+    const taskName = this.tasks.taskName(ACTION_NAME);
 
     // Check that the task was added to Gulp
     expect(gulp.hasTask(taskName)).toEqual(true);
@@ -206,7 +206,7 @@ describe("A GulpTaskGroup", function(){
 
     // Add the action to Gulp as a task
     this.tasks.loadTask(ACTION_NAME, gulp);
-    const taskName = this.tasks.createTaskName(ACTION_NAME);
+    const taskName = this.tasks.taskName(ACTION_NAME);
 
     // Check that the task was added to Gulp
     expect(gulp.hasTask(taskName)).toEqual(true);
@@ -244,10 +244,10 @@ describe("A GulpTaskGroup", function(){
     this.tasks.loadAllTasks(gulp);
 
     // Verify that they were all added
-    const actionNames = this.tasks.listActionNames();
+    const actionNames = this.tasks.getActions();
     var taskName;
     for(i=0; i<actionNames.length; ++i) {
-      taskName = this.tasks.createTaskName(actionNames[i]);
+      taskName = this.tasks.taskName(actionNames[i]);
       // Check that this task was added to Gulp
       expect(gulp.hasTask(taskName)).toEqual(true);
     }
