@@ -6,6 +6,9 @@
   "scripts": {
     "test": "./node_modules/.bin/jasmine"
   },
+  "directories": {
+    "lib": "./lib"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/c1rrus/gulp-kitchen-sink.git"
@@ -21,7 +24,11 @@
     "build",
     "automation"
   ],
-  "author": "James Nash",
+  "author": {
+    "name": "James Nash",
+    "url":  "http://cirrus.twiddles.com/"
+  },
+  "contributors": [],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/c1rrus/gulp-kitchen-sink/issues"
@@ -37,5 +44,8 @@
   },
   "devDependencies": {
     "jasmine": "^2.4.1"
+  },
+  "engines": {
+    "node": "^4.0 || ^5.1"
   }
 }

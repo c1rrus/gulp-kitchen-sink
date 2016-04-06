@@ -35,6 +35,9 @@ node_modules
 # JSDoc default output location
 out/
 
+# Build output
+dist/
+
 # OS-specific guff
 .DS_Store
 
