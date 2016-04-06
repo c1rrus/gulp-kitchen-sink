@@ -1,0 +1,52 @@
+{
+  "name": "gulp-kitchen-sink",
+  "version": "0.1.0",
+  "description": "A collection of useful Gulp tasks and utilities.",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/jasmine",
+    "preversion": "npm test"
+  },
+  "directories": {
+    "lib": "./lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/c1rrus/gulp-kitchen-sink.git"
+  },
+  "keywords": [
+    "gulp",
+    "lazypipe",
+    "task",
+    "recipe",
+    "starter",
+    "kit",
+    "utility",
+    "build",
+    "automation"
+  ],
+  "author": {
+    "name": "James Nash",
+    "url": "http://cirrus.twiddles.com/"
+  },
+  "contributors": [],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/c1rrus/gulp-kitchen-sink/issues"
+  },
+  "homepage": "https://github.com/c1rrus/gulp-kitchen-sink#readme",
+  "dependencies": {
+    "gulp": "^3.9.1",
+    "gulp-debug": "^2.1.2",
+    "gulp-filter": "^4.0.0",
+    "gulp-less": "^3.0.5",
+    "gulp-lesshint": "^1.1.0",
+    "lazypipe": "^1.0.1"
+  },
+  "devDependencies": {
+    "jasmine": "^2.4.1"
+  },
+  "engines": {
+    "node": "^4.0 || ^5.1"
+  }
+}

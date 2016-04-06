@@ -1,0 +1,13 @@
+{
+  "source": {
+    "include": ["lib"]
+  },
+  "opts": {
+    "destination": "dist/doc",
+    "recurse": true,
+    "package": "package.json"
+  },
+  "plugins": [
+    "plugins/markdown"
+  ]
+}

@@ -31,3 +31,15 @@ node_modules
 
 # Optional REPL history
 .node_repl_history
+
+# JSDoc default output location
+out/
+
+# Build output
+dist/
+
+# OS-specific guff
+.DS_Store
+
+# IDE settings
+.idea/
