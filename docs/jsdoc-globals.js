@@ -23,12 +23,15 @@
  * @typedef {function} tasksModuleFn
  *
  * @param {external:gulp} gulp    The gulp instance that the tasks will be added to.
- * @param {boolean} [lazyload]    If omitted or `false`, all tasks within the task group will immediately be
- *                                added to Gulp (this is the default behaviour).
- *                                If `true`, tasks will **not** be added to Gulp.
+ *
+ * @param {string} [groupName]    The name that will be given to the task group. If none is provided
+ *                                a default task group name will be used.
  * @param {module:gulp-kitchen-sink/types/build-config} [config]
  *                                The build config that will be passed to the task group when it is created.
  *                                If none is provided, the global config object will be used.
+ * @param {boolean} [lazyload]    If omitted or `false`, all tasks within the task group will immediately be
+ *                                added to Gulp (this is the default behaviour).
+ *                                If `true`, tasks will **not** be added to Gulp.
  *
  * @returns {module:gulp-kitchen-sink/types/task-group}
  *                                A task group containing the actions that were added to Gulp as tasks
