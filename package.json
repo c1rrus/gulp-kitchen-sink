@@ -4,7 +4,8 @@
   "description": "A collection of useful Gulp tasks and utilities.",
   "main": "lib/index.js",
   "scripts": {
-    "test": "./node_modules/.bin/jasmine"
+    "test": "./node_modules/.bin/jasmine",
+    "preversion": "npm test"
   },
   "directories": {
     "lib": "./lib"
@@ -26,7 +27,7 @@
   ],
   "author": {
     "name": "James Nash",
-    "url":  "http://cirrus.twiddles.com/"
+    "url": "http://cirrus.twiddles.com/"
   },
   "contributors": [],
   "license": "MIT",
