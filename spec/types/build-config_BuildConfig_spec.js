@@ -2,6 +2,7 @@
   Jasmine unit tests for BuildConfig class in types/build-config.js
  */
 describe("A BuildConfig", function(){
+  "use strict";
 
   const BuildConfig = require('../../lib/types/build-config');
 

@@ -2,6 +2,7 @@
  Jasmine unit tests for the GulpTaskGroup class in types/task-group.js
  */
 describe("A GulpTaskGroup", function(){
+  "use strict";
 
   // Some useful values & types
   const GROUP_NAME = 'test-group';
