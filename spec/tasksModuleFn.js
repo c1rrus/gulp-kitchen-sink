@@ -10,7 +10,7 @@ const BuildConfig = require('../lib/types/build-config');
 const groupName = 'my-test-group';
 
 // Export a global function
-module.exports = function(description, gulp, tasksModuleFn){
+module.exports = function(description, gulp, tasksModuleFn, additionalTestsFn){
 
   describe(description, function(){
 
@@ -122,6 +122,11 @@ module.exports = function(description, gulp, tasksModuleFn){
         expect(gulp.hasTask(tasks.taskName(actions[i]))).toBe(true);
       }
     });
+
+
+    if(additionalTestsFn){
+      additionalTestsFn();
+    }
 
   });
 
