@@ -21,6 +21,6 @@ Every little helps!
 
 ## Coding style
 
-* We use 2 space soft tabs for indentation, UNIX-style `\n` line endingsand UTF-8 encoding.
+* We use 2 space soft tabs for indentation, UNIX-style `\n` line endings and UTF-8 encoding.
     * The repo contains an `.editorconfig` to automatically enforce this in [supported editors](http://editorconfig.org/#download).
 * A definitive JavaScript style is still TBD. For now, please try to match the existing style in whatever file(s) you edit.

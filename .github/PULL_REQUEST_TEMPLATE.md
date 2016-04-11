@@ -1,4 +1,4 @@
-**Note:** Before submitting this PR, please check that you have followed the [PR Guidelines](../CONTRIBUTING.md#pr_guidelines). Thanks!
+**Note:** Before submitting this PR, please check that you have followed the [PR Guidelines](../CONTRIBUTING.md#pr-guidelines). Thanks!
 
 Fixes #...
 
