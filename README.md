@@ -1,4 +1,9 @@
 # gulp-kitchen-sink
+
+**Deprecated**! This package is no longer being maintained. Please consider updating your `gulpfile.js` accordingly.
+
+---
+
 A collection of useful Gulp tasks and utilities.
 
 `gulp-kitchen-sink` contains a number of useful Gulp tasks for common web development build activities. It comes with a small API to conveniently configure and add its tasks into your `gulpfile.js`.
